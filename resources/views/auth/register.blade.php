@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <form id="registerForm">
         @csrf
 
         <!-- Name -->
@@ -49,4 +49,30 @@
             </x-primary-button>
         </div>
     </form>
+    @section('script')
+        <script>
+            $("#registerForm").submit(function(e) {
+                e.preventDefault();
+                
+                $.ajax({
+                    url: "/register",
+                    method: "POST",
+                    data: {
+                        name: $("#name").val(),
+                        email: $("#email").val(),
+                        password: $("#password").val(),
+                        password_confirmation: $("#password_confirmation").val(),
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        window.location.href = response.redirectUrl; 
+                    },
+                    error: function(xhr) {
+                        alert("Error: " + xhr.responseJSON.message); 
+                    }
+                });
+            });
+
+        </script>
+    @endsection
 </x-guest-layout>
